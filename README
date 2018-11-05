@@ -1,0 +1,10 @@
+How to run:
+  python app.py
+
+How to generate records in db:
+  python
+  >>import app
+  >>app.Example.generate(100)
+  >>app.Example.query.all()
+
+

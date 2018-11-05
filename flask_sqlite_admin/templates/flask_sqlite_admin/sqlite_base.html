@@ -1,0 +1,45 @@
+<!--
+##########################################
+# Author         : Haibo Zhu             
+# Email          : haibo.zhu@hotmail.com 
+# Created        : 2018-11-05 17:51 
+# Last modified  : 2018-11-05 17:51
+# Filename       : sqlite_base.html
+# Description    :                       
+#########################################
+//-->
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}
+	{{title}}	
+{% endblock %}
+
+{% block styles %}
+  {{ super() }}
+	<link rel=stylesheet type=text/css href="{{ url_for(bpName+'.static', filename='flask_sqlite_admin/css/bootstrap.min.css') }}">
+{% endblock %}
+
+
+{% block scripts %}
+  {{ super() }}
+  <!-- <script src="{{ url_for(bpName+'.static', filename='flask_sqlite_admin/js/jquery.js') }}"></script> -->
+	<script src="{{ url_for(bpName+'.static', filename='flask_sqlite_admin/js/bootstrap.min.js') }}"></script>
+{% endblock %}
+
+
+{% block content %}
+  {{ super() }}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>{{h1}}</h1>
+        {% for message in get_flashed_messages() %}
+          <div class="alert alert-warning alert-dismissible alert-secir" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            {{ message }}
+          </div>
+        {% endfor %}
+		  </div><!-- /span10 -->       
+    </div><!-- /row -->
+  </div><!-- /container -->
+{% endblock %}
