@@ -1,3 +1,11 @@
+#########################################
+# Author         : Haibo Zhu             
+# Email          : haibo.zhu@hotmail.com 
+# created        : 2018-11-06 13:38 
+# Last modified  : 2018-11-07 03:39
+# Filename       : sqliteFunctions.py
+# Description    :                       
+#########################################
 import re
 from functools import wraps
 import types
@@ -106,7 +114,7 @@ class sqliteAdminFunctions:
       return tables
     else:
       print("  ## db execute SELECT name FROM sqlite_master WHERE type = \"table\"")
-      c = self.db.execute('SELECT name FROM sqlite_master WHERE type = "table"')
+      c = self.db.session.execute('SELECT name FROM sqlite_master WHERE type = "table"')
       tables=  c.fetchall()
 
       if ('sqlite_sequence',) in tables:
@@ -118,23 +126,26 @@ class sqliteAdminFunctions:
     print("==>tableContents")
     """ create list of tables for admin """
     res = {}
-   
+
     if table in self.tables:
+      print("  ## table:{}".format(table))
       res['schema'] = self.tableSchemas(table)
       if res['schema'][0]['primaryKey'] == 1:
         res['primaryKey'] = res['schema'][0]['name']
-        
-        con = self.db
-        con.row_factory = self.dict_factory
-        print("  ##db execute select count({}) as c from {}".format(res['primaryKey'],table))
-        c = self.db.execute('select count(?) as c from %s' % (table),[res['primaryKey']])
+        print("  ## got res primaryKey:{}".format(res['primaryKey']))
+        #con = self.db
+        #con.row_factory = self.dict_factory
+        print("  ##db execute select count({}) as c from {}".format(res['primaryKey'],'user'))
+        c = self.db.session.execute('select count({}) as c from {}'.format(res['primaryKey'],table))
+
+        #print("  ##got count {} from {}:".format(c.fetchone()['c'], table))
         res['count'] = c.fetchone()['c']
-        self.db.commit() 
+        #self.db.commit() 
         if sort == '': sort = res['primaryKey']
-        print("  ## db execute select * from {} order by {} {} limit {},50".format(table, sort, dir, int(offset)))
-        l = self.db.execute('select * from %s order by %s %s limit ?,50' % (table,sort,dir),[int(offset)*50])
+        #print("  ## db execute select * from {} order by {} {} limit {},50".format(table, sort, dir, int(offset)))
+        l = self.db.session.execute('select * from {} order by {} {} limit {},50'.format(table,sort,dir,int(offset)*50))
         res['contents'] = l.fetchall()
-        self.db.commit()
+        #self.db.commit()
         return res
       else:
         raise ValueError('No primary key for first column in table `%s`' % table)
@@ -144,24 +155,27 @@ class sqliteAdminFunctions:
   def tableSchemas(self,table):
     """ return table schemas by column """
     print("==>tableSchemas")
-    cur = self.db.cursor()
-    print("  ## db cursor execute PRAGMA table_info({})".format(table))
-    cur.execute('PRAGMA table_info({})'.format(table) )
-    sch = cur.fetchall()
-    cur.close()
-    self.db.commit()
-    print(sch)
-    return [{'name':row[1],'dataType':row[2],'notNull':row[3],'primaryKey':row[5]} for row in sch]
-   
+    print("  ## db execute PRAGMA table_info({})".format(table))
+    sch = self.db.session.execute('PRAGMA table_info({})'.format(table))
+    sch_ls = sch
+    '''
+    print("  ##Got schema:")
+    for s in sch_ls:
+      print("     name:{}, datatype:{}, notNull:{}, primaryKey:{}".format(s[1],s[2],s[3],s[5]))
+    for s in sch_ls:
+      print("     name:{}, datatype:{}, notNull:{}, primaryKey:{}".format(s[1],s[2],s[3],s[5]))
+    '''
+    return [{'name':row[1],'dataType':row[2],'notNull':row[3],'primaryKey':row[5]} for row in sch_ls]
+ 
   def tableCols(self, table):
     print("==>tableCols")
-    
-    cur = self.db.cursor()
+
+    #cur = self.db.cursor()
     print("  ## db cursor execute PRAGMA table_info({})".format(table))
-    cur.execute('PRAGMA table_info({})'.format(table) )
-    sch = cur.fetchall()
-    cur.close()
-    self.db.commit()
+    tb_info = self.db.session.execute('PRAGMA table_info({})'.format(table) )
+    sch = tb_info.fetchall()
+    #cur.close()
+    #self.db.commit()
 
     res = []
     for row in sch:
@@ -242,8 +256,9 @@ class sqliteAdminFunctions:
 
     # execute sql
     print("  ##db execute {} {}".format(qString, qParams))
-    self.db.execute(qString,qParams)
-    self.db.commit()
+    self.db.session.execute(qString,qParams)
+    #self.db.commit()
+    self.db.session.commit()
     return ret
 
   #检查表中是否已存在列
@@ -266,11 +281,11 @@ class sqliteAdminFunctions:
 
     command = "ALTER TABLE {} ADD {} {};".format(table, new_col, new_col_type)
     print("  ## db cursor execute {}".format(command))
-    cu = self.db.cursor()
+    #cu = self.db.cursor()
 
-    res = cu.execute(command)
-    cu.close()
-    self.db.commit()
+    res = self.db.session.execute(command)
+    #cu.close()
+    self.db.session.commit()
     print("  ##{}".format(pprint.pformat(self.tableSchemas(table))))
 
   '''
@@ -282,8 +297,19 @@ class sqliteAdminFunctions:
     return cols
   '''
 
+  def saveRow(self, row, table,id):
+
+    r = []
+    for k,v in row.items():
+      r.append("{}={}".format(k,v))
+    command = "update {} set {} where id={}".format(table,",".join(r),id)
+
+    print("  ## db execute {}".format(command))
+    self.db.session.execute(command)
+    self.db.session.commit()
+
   def delCol(self, del_col, table):
-    print("==>delCol")
+    print("==>delCol from {}".format(table))
     cols = self.tableCols(table)
     deleted = False
     for c in cols:
@@ -291,43 +317,54 @@ class sqliteAdminFunctions:
         cols.remove(c)
         deleted = True
         break
-    
+
     if deleted == False:
       print("The column {} doesn't exists".format(del_col))
       return
     cp_cols= [row.split()[0] for row in cols]
     try:
+      '''
       db = self.db
       db.close()
       db1 = sqlite3.connect("/mnt/educloud/working/example.db")
       cu = db1.cursor()
+      '''
       command = "drop table if exists 'temp'"
-      print("  ## db execute {}".format(command))
-      cu.execute(command)
-      db1.commit()
+      print("  ##db execute {}".format(command))
+      self.db.session.execute(command)
+      self.db.session.commit()
 
       command = "create table temp({})".format(','.join(cols))
       print("  ##db execute {}".format(command))
-      cu.execute(command)
-      db1.commit()
+      self.db.session.execute(command)
+      self.db.session.commit()
 
       command = "insert into {}({}) select {} from {}".format('temp', ','.join(cp_cols), ','.join(cp_cols), table)
       print("  ##db execute {}".format(command))
-      cu.execute(command)
-      db1.commit()
+      self.db.session.execute(command)
+      self.db.session.commit()
 
       command = "drop table if exists {}".format(table) 
       print("  ##db execute {}".format(command))
-      cu.execute(command)
-      db1.commit()
+      self.db.session.execute(command)
+      self.db.session.commit()
+
+      '''
+      command = "replace into {} select * from temp";
+      print("  ##db execute {}".format(command))
+      self.db.session.execute(command)
+      self.db.commit()
+      '''
 
       command = "alter table temp rename to {}".format(table)
       print("  ##db execute {}".format(command))
-      cu.execute(command)
-      db1.commit()
+      self.db.session.execute(command)
+      self.db.session.commit()
 
+      '''
       db1.close()
       self.db = sqlite3.connect("/mnt/educloud/working/example.db")
+      '''
 
     except self.db.Error as ex:
       print(ex)

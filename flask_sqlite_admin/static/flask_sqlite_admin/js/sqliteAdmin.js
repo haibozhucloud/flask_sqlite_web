@@ -87,7 +87,6 @@ $(document.body).on("click",".th-sort",function(e){
 
 $(document.body).on("change", "#field_type", function(){
 
-
 	$.ajax({
 		url: window.location+'selected', 
 		type: 'POST',
@@ -148,8 +147,8 @@ $(document.body).on("click",".glyphicon-trash",function(){
   var del_col = $(this).parent().find(".th-sort").text()
   //var tab = $("[data-toggle=tab]").first().text()
   var tab = $(".active").find('a[data-toggle="tab"]').text()
-  console.log("  ## deleting column in ", tab)
-  console.log("  ##deleting column with post:" , del_col)
+  console.log("  ## deleting column in table: ", tab)
+  console.log("  ##deleting column::" , del_col)
   /*
   $.post(
     window.location+'api',
@@ -176,7 +175,7 @@ $(document.body).on("click",".glyphicon-trash",function(){
 		},
     error: function(result){
       console.log(result);
-    }
+    } 
 
 	})
   //end ajax
@@ -225,13 +224,13 @@ $(document.body).on("click",".edit-save",function(e){
 		_trId = $(this).data('id')
 		_that = this
 	}
-	postData['id']=$(this).data('id')
-	postData['primaryKey']=$(this).data('primarykey')
+	//postData['id']=$(this).data('id')
+	//postData['primaryKey']=$(this).data('primarykey')
 	//postData['action']=$(this).data('action')
-	postData['table']=$(this).data('table')
+	//postData['table']=$(this).data('table')
 	
 	// pull post data from inputs
-	var _tr = $("#tr-"+postData['table']+"-"+_trId)
+	var _tr = $("#tr-"+ $(this).data('table') +"-"+_trId)
 	_tr.find('input').each(function(){
 		postData[this.name] = this.value
 	})
@@ -277,6 +276,46 @@ $(document.body).on("click",".edit-save",function(e){
 		_tr.after(returnHTML(0,'An error occurred. Refer to console for more information'))
 	})
 	*/
+
+  method = $(this).data('method')
+  if (method == 'put'){
+    $.ajax({
+      type: 'POST',
+      contentType: "application/json",
+      url: window.location+'api', 
+      dataType: 'json',
+      data: JSON.stringify({'id':$(this).data('id'),'command':'save_row','table':$(this).data('table'),'row':postData}),
+      success: function(data) {
+        alert("Saved a row, status:" + data.status);
+        fetchTabHTML(postData['table'])
+        activaTab(postData['table'])
+      },
+      error: function(result){
+        console.log(result);
+      } 
+    });
+    return;
+
+  }else if (method == 'delete'){
+
+    $.ajax({
+      type: 'POST',
+      contentType: "application/json",
+      url: window.location+'api', 
+      dataType: 'json',
+      data: JSON.stringify({"command":"del_col", "data": del_col, "table":tab}),
+      success: function(data) {
+        alert("deleted a col, status:" + data.status);
+        fetchTabHTML(postData['table'])
+        activaTab(postData['table'])
+      },
+      error: function(result){
+        console.log(result);
+      } 
+
+    })
+    return 
+  }
   console.log("##request api here, method:",$(this).data('method'), ", postData:", postData)
 	$.ajax({
 		url: window.location+'api', 
