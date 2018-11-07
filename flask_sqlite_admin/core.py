@@ -2,7 +2,7 @@
 # Author         : Haibo Zhu             
 # Email          : haibo.zhu@hotmail.com 
 # created        : 2018-11-05 17:40 
-# Last modified  : 2018-11-07 03:43
+# Last modified  : 2018-11-07 17:29
 # Filename       : core.py
 # Description    :                       
 #########################################
@@ -86,6 +86,7 @@ def sqliteAdminBlueprint(
       #print("  ##res:{}".format(pprint.pformat(res)))
       return render_template('flask_sqlite_admin/sqlite.html',res=res,title=title,h1=h1,baseLayout=baseLayout,bpName=bpName) 
 
+
   #@sh.wrapper()
   @sqlite.route('/api',methods=['GET','POST','PUT','DELETE'])
   @decorator
@@ -94,16 +95,17 @@ def sqliteAdminBlueprint(
     # create sqliteAdminFunctions object
 
     '''
-    try:
-      pass
-      #db = sqlite3.connect(dbPath, timeout=1000)
-      #db.isolation_level=None
-      c = db.execute("select count(id) as c from example" )
-    except Exception as e:
-      print("  ##exception:{}".format(e))
+      try:
+        pass
+        #db = sqlite3.connect(dbPath, timeout=1000)
+        #db.isolation_level=None
+        c = db.execute("select count(id) as c from example" )
+      except Exception as e:
+        print("  ##exception:{}".format(e))
     '''
 
     sf = sqliteAdminFunctions(global_db,tables=tables,extraRules=extraRules)
+
     # GET request
     if request.method == 'GET':
       q = request.args
@@ -119,34 +121,35 @@ def sqliteAdminBlueprint(
       add_form.field_table.data = request.args['table']
       #db.close()
       return render_template('flask_sqlite_admin/sqlite_ajax.html',add_form=add_form,data=res,title=title,h1=h1,baseLayout=baseLayout,bpName=bpName,q=q,qJson=json.dumps(q))
+
     # POST request
     elif request.method == 'POST':
       try:
         request_data = request.get_json()
-        print("  ## POST: command:{}".format(request_data))
+
+        # delete column
         if "command" in request_data and request_data['command'] == 'del_col':
           del_col = request_data['data']
           table = request_data['table']
-          print("  ## deleting a column: {} in {}".format(del_col, table ))
           sf.delCol(del_col, table)
-          #db.close()
-          return jsonify({'status':'success', 'data':table})
+          res = {'status':1, 'message':'<a href="" class="alert-link">Refresh Page</a>'}
+
+        # save a row
         elif "command" in request_data and request_data['command'] == 'save_row':
           sf.saveRow(request_data['row'],request_data['table'],request_data['id'])
-          return jsonify({'status':'success', 'data':table})
-        elif "command" in request_data and request_data['command'] == 'delete_row':
-          pass
-        print('  ## POST res:{}'.format(sf.editTables(request.form,request.method)))
-        res = {'status':1,'message':sf.editTables(request.form,request.method)}
+          res = {'status':1, 'message':'<a href="" class="alert-link">Refresh Page</a>'}
+
+        #delete a row
+        elif "command" in request_data and request_data['command'] == 'del_row':
+          print("  ## deleting a row:{}".format(request_data['id']))
+          table = request_data['table']
+          id    = request_data['id']
+          sf.delRow(table, id)
+          res = {'status':1,'message':'<a href="" class="alert-link">Refresh Page</a>'}
       except Exception as e:
         print("  ##error:{}".format(e))
         res = {'status':0,'error':'{}'.format(e)}
-      #db.close()
       return json.dumps(res)
-    elif request.method == 'PUT':
-      print("  ## save new row:{}".format(request.get_json()))
-    elif request.method == 'DELETE':
-      print("  ## save new row:{}".format(request))
 
 
   @sqlite.route('/selected', methods=['POST'])

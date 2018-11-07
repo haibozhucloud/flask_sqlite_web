@@ -232,9 +232,10 @@ $(document.body).on("click",".edit-save",function(e){
 	// pull post data from inputs
 	var _tr = $("#tr-"+ $(this).data('table') +"-"+_trId)
 	_tr.find('input').each(function(){
-		postData[this.name] = this.value
+    if (this.value != 'None'){ 
+		  postData[this.name] = this.value
+    }
 	})
-	console.log("##saving, postdata:", postData)
 	
 	// update static fields
 	var staticUpdate = function(){
@@ -278,7 +279,8 @@ $(document.body).on("click",".edit-save",function(e){
 	*/
 
   method = $(this).data('method')
-  if (method == 'put'){
+  if (method == 'save_row'){
+	  console.log("##saving, postdata:", postData)
     $.ajax({
       type: 'POST',
       contentType: "application/json",
@@ -286,36 +288,50 @@ $(document.body).on("click",".edit-save",function(e){
       dataType: 'json',
       data: JSON.stringify({'id':$(this).data('id'),'command':'save_row','table':$(this).data('table'),'row':postData}),
       success: function(data) {
-        alert("Saved a row, status:" + data.status);
-        fetchTabHTML(postData['table'])
-        activaTab(postData['table'])
+        console.log("  ##got data:",data)
+				returnHTML(1,data.message)
+				close_edit(_that)
+				staticUpdate()
       },
       error: function(result){
+    		returnHTML(0,result.error)
+				close_edit(_that)
+				staticUpdate()
         console.log(result);
       } 
     });
     return;
 
-  }else if (method == 'delete'){
-
+  }else if (method == 'delete_row'){
+    console.log("  ## delete a row")
     $.ajax({
       type: 'POST',
       contentType: "application/json",
       url: window.location+'api', 
       dataType: 'json',
-      data: JSON.stringify({"command":"del_col", "data": del_col, "table":tab}),
+      data: JSON.stringify({"command":"del_row", "id":$(this).data('id'), "table":$(this).data('table')}),
       success: function(data) {
+				returnHTML(1,data.message)
+				close_edit(_that)
+				staticUpdate()
+        /*
         alert("deleted a col, status:" + data.status);
         fetchTabHTML(postData['table'])
         activaTab(postData['table'])
+        */
       },
       error: function(result){
         console.log(result);
+    		returnHTML(0,result.error)
+				close_edit(_that)
+				staticUpdate()
       } 
 
     })
+
     return 
   }
+
   console.log("##request api here, method:",$(this).data('method'), ", postData:", postData)
 	$.ajax({
 		url: window.location+'api', 

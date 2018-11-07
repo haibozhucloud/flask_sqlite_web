@@ -2,7 +2,7 @@
 # Author         : Haibo Zhu             
 # Email          : haibo.zhu@hotmail.com 
 # created        : 2018-11-06 13:38 
-# Last modified  : 2018-11-07 03:39
+# Last modified  : 2018-11-07 17:29
 # Filename       : sqliteFunctions.py
 # Description    :                       
 #########################################
@@ -296,6 +296,13 @@ class sqliteAdminFunctions:
     cols = [row['name'] for row in sch]
     return cols
   '''
+
+  def delRow(self, table, id):
+    command = "delete from {} where id={}".format(table,id)
+    print("  ##db execute: {}".format(command))
+    self.db.session.execute(command)
+    self.db.session.commit()
+
 
   def saveRow(self, row, table,id):
 
