@@ -304,6 +304,8 @@ $(document.body).on("click",".edit-save",function(e){
 
   }else if (method == 'delete_row'){
     console.log("  ## delete a row")
+    $(this).closest(".popover").popover('hide').siblings('.wrench').hide().siblings(".x-wrench").show()
+
     $.ajax({
       type: 'POST',
       contentType: "application/json",
