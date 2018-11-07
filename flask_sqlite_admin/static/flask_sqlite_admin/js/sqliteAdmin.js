@@ -289,7 +289,7 @@ $(document.body).on("click",".edit-save",function(e){
       data: JSON.stringify({'id':$(this).data('id'),'command':'save_row','table':$(this).data('table'),'row':postData}),
       success: function(data) {
         console.log("  ##got data:",data)
-				returnHTML(1,data.message)
+				returnHTML(data.status,data.message)
 				close_edit(_that)
 				staticUpdate()
       },
@@ -313,7 +313,7 @@ $(document.body).on("click",".edit-save",function(e){
       dataType: 'json',
       data: JSON.stringify({"command":"del_row", "id":$(this).data('id'), "table":$(this).data('table')}),
       success: function(data) {
-				returnHTML(1,data.message)
+				returnHTML(data.status,data.message)
 				close_edit(_that)
 				staticUpdate()
         /*
@@ -332,6 +332,34 @@ $(document.body).on("click",".edit-save",function(e){
     })
 
     return 
+  }else if (method == 'save_detail'){
+    console.log("  ##Saving new row :", postData)
+
+    $.ajax({
+      type: 'POST',
+      contentType: "application/json",
+      url: window.location+'api', 
+      dataType: 'json',
+      data: JSON.stringify({"command":"save_detail", "table":$(this).data('table'), "row":postData}),
+      success: function(data) {
+				returnHTML(data.status,data.message)
+				//close_edit(_that)
+				staticUpdate()
+        /*
+        alert("deleted a col, status:" + data.status);
+        fetchTabHTML(postData['table'])
+        activaTab(postData['table'])
+        */
+      },
+      error: function(result){
+        console.log(result);
+    		returnHTML(0,result.error)
+				//close_edit(_that)
+				staticUpdate()
+      } 
+
+    });
+    return;
   }
 
   console.log("##request api here, method:",$(this).data('method'), ", postData:", postData)

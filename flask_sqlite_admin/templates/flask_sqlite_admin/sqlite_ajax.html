@@ -3,7 +3,7 @@
 # Author         : Haibo Zhu             
 # Email          : haibo.zhu@hotmail.com 
 # Created        : 2018-11-07 16:55 
-# Last modified  : 2018-11-07 16:55
+# Last modified  : 2018-11-07 17:49
 # Filename       : sqlite_ajax.html
 # Description    :                       
 #########################################
@@ -91,7 +91,7 @@
 	  {% endif %}
 	{% endfor %}
 	  <td class="w5">
-		<button class="btn btn-default edit-save" data-method="post" data-table="{{q['table']}}" data-primarykey="{{data['primaryKey']}}" data-toggle="tooltip" data-placement="top" title="Save edits">Save</button>
+		<button class="btn btn-default edit-save" data-method="save_detail" data-table="{{q['table']}}" data-primarykey="{{data['primaryKey']}}" data-toggle="tooltip" data-placement="top" title="Save edits">Save</button>
 	  </td>
 	  <td>
 		<button type="button" class="close add-btn-close">

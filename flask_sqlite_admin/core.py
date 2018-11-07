@@ -2,7 +2,7 @@
 # Author         : Haibo Zhu             
 # Email          : haibo.zhu@hotmail.com 
 # created        : 2018-11-05 17:40 
-# Last modified  : 2018-11-07 17:29
+# Last modified  : 2018-11-07 20:02
 # Filename       : core.py
 # Description    :                       
 #########################################
@@ -126,30 +126,40 @@ def sqliteAdminBlueprint(
     elif request.method == 'POST':
       try:
         request_data = request.get_json()
+        print("  ## got request:{}".format(request_data))
+        if "command" in request_data:
 
-        # delete column
-        if "command" in request_data and request_data['command'] == 'del_col':
-          del_col = request_data['data']
-          table = request_data['table']
-          sf.delCol(del_col, table)
-          res = {'status':1, 'message':'<a href="" class="alert-link">Refresh Page</a>'}
+          # delete column
+          if request_data['command'] == 'del_col':
+            del_col = request_data['data']
+            table = request_data['table']
+            sf.delCol(del_col, table)
+            res = {'status':1, 'message':'<a href="" class="alert-link">Refresh Page</a>'}
 
-        # save a row
-        elif "command" in request_data and request_data['command'] == 'save_row':
-          sf.saveRow(request_data['row'],request_data['table'],request_data['id'])
-          res = {'status':1, 'message':'<a href="" class="alert-link">Refresh Page</a>'}
+          # save a row
+          elif request_data['command'] == 'save_row':
+            sf.saveRow(request_data['row'],request_data['table'],request_data['id'])
+            res = {'status':1, 'message':'<a href="" class="alert-link">Refresh Page</a>'}
 
-        #delete a row
-        elif "command" in request_data and request_data['command'] == 'del_row':
-          print("  ## deleting a row:{}".format(request_data['id']))
-          table = request_data['table']
-          id    = request_data['id']
-          sf.delRow(table, id)
-          res = {'status':1,'message':'<a href="" class="alert-link">Refresh Page</a>'}
+          #delete a row
+          elif request_data['command'] == 'del_row':
+            print("  ## deleting a row:{}".format(request_data['id']))
+            table = request_data['table']
+            id    = request_data['id']
+            sf.delRow(table, id)
+            res = {'status':1,'message':'<a href="" class="alert-link">Refresh Page</a>'}
+          #create a row
+          elif request_data['command'] == 'save_detail':
+            table = request_data['table']
+            row = request_data['row']
+            print("  ## creating a row {} in {}".format(row, table))
+            sf.addRow(table,row)
+            res = {'status':1,'message':'<a href="" class="alert-link">Refresh Page</a>'}
       except Exception as e:
         print("  ##error:{}".format(e))
         res = {'status':0,'error':'{}'.format(e)}
       return json.dumps(res)
+
 
 
   @sqlite.route('/selected', methods=['POST'])

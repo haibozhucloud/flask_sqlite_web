@@ -2,7 +2,7 @@
 # Author         : Haibo Zhu             
 # Email          : haibo.zhu@hotmail.com 
 # created        : 2018-11-06 13:38 
-# Last modified  : 2018-11-07 17:29
+# Last modified  : 2018-11-07 20:12
 # Filename       : sqliteFunctions.py
 # Description    :                       
 #########################################
@@ -377,4 +377,15 @@ class sqliteAdminFunctions:
       print(ex)
     #print(pprint.pformat(self.tableSchemas(table)))
 
+  def addRow(self, table, row):
+    values = []
+    keys = []
+    for k,v in row.items():
+      values.append(v)
+      keys.append(k)
+
+    command = "insert into {}({}) values({})".format(table, ",".join(keys),",".join(values))
+    print("db execute: {}".format(command))
+    self.db.session.execute(command)
+    self.db.session.commit()
 
