@@ -10,7 +10,7 @@ This package creates a management interface to view/modify sqlite databases in a
   pip3 install -r requirments.txt
 
 ## Usage
-  >python app.py
+  python app.py
 
   Access http://<your server net address>:5000/sqlite
 
@@ -39,4 +39,4 @@ However, the following measures do apply:
 =======
 # flask_sqlite_web
 Manage sqlite database by web, including editing/removing/adding columns and rows on web. Works with python3, sqlite3, flask framework. Bases on the project of 'twaldear/flask-sqlite-admin' 
->>>>>>> c87d9a9dfcb34ae940fec124a089f52b3d3da826
+c87d9a9dfcb34ae940fec124a089f52b3d3da826
