@@ -5,7 +5,7 @@ Operating sqlite database on web. Works with Python3, sqlite3, flask, flask_sqla
 ### Ubuntu16.04
 * virtualenv venv3 --python=/usr/bin/python3
 * source venv3/bin/activate
-* pip3 install -r requirments.txt
+* pip3 install -r requirements.txt
 
 ## Usage
 * python app.py
