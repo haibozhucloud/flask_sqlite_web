@@ -16,9 +16,9 @@ This package creates a management interface to view/modify sqlite databases in a
 ## Advanced
 This project was inspired and quickly created based on https://github.com/twaldear/flask-sqlite-admin
 The new features are:
-	Can add a new column on web
-	Can delete a new column on web
-	Works with Python3, sqlite3 and flask_bootstrap
+* Can add a new column on web
+* Can delete a new column on web
+* Works with Python3, sqlite3 and flask_bootstrap
 
 The other information can reference the origin project flask-sqlite-admin at https://github.com/twaldear/flask-sqlite-admin
 
