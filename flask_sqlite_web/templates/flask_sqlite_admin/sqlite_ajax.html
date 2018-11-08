@@ -3,7 +3,7 @@
 # Author         : Haibo Zhu             
 # Email          : haibo.zhu@hotmail.com 
 # Created        : 2018-11-07 16:55 
-# Last modified  : 2018-11-07 17:49
+# Last modified  : 2018-11-08 15:34
 # Filename       : sqlite_ajax.html
 # Description    :                       
 #########################################
@@ -27,16 +27,20 @@
             <span class="glyphicon glyphicon glyphicon-sort-by-attributes-alt"><span>
           {% endif %}
         {% endif %}
+        <!--
         <span class="glyphicon glyphicon-trash " style="display:none"></span>
+        -->
       </th>
       {# endif #}
     {% endfor %}
       <th class="w5">
         <button class="btn btn-primary state-edit edit-save" data-method="put" data-table="" data-id="" data-primarykey="" data-toggle="tooltip" data-placement="top" title="Save edits">Save</button>
       </th>
+      <!--
       <th class="w5 text-muted plus" data-placement="left" data-state="inactive" data-toggle="popover" data-content='<div class="container-fluid" style="padding-bottom:10px;padding-top:10px"> {{wtf.quick_form(add_form)}} </div>' data-html="true" >
         <span class="glyphicon glyphicon-plus " style="display:none"></span>
       </th>
+      -->
     </tr>
   </thead>
 
@@ -61,6 +65,7 @@
         <td class="w5">
           <button class="btn btn-primary state-edit edit-save" data-method="save_row" data-table="{{q['table']}}" data-id="{{row[data['primaryKey']]}}" data-primarykey="{{data['primaryKey']}}" data-toggle="tooltip" data-placement="top" title="Save edits">Save</button>
         </td>
+        <!--
         <td class="w5 text-muted wrench" data-placement="left" data-state="inactive" data-toggle="popover" data-content='
           <table class="table table-condensed table-hover table-popover">
           <tr><td><span class="open-edit" data-table="{{q['table']}}" data-id="{{row[data['primaryKey']]}}"><span class="text-primary glyphicon glyphicon-pencil"></span> Edit</span></td></tr>
@@ -75,6 +80,7 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </td>
+        -->
       </tr>
     {% endfor %}
   {% endif %}
@@ -99,10 +105,11 @@
 		</button>
 	  </td>
 	</tr>
+  <!--
 	<tr class="add-btn">
 		<td colspan="{{data['contents'][0]|length + 3}}"><button class="btn btn-default">Add Row</button></td>
 	</tr>
-
+  -->
   </tbody>
 </table>
 
