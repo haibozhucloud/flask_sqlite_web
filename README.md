@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-# flask-sqlite-admin
+# flask_sqlite_web
 SQLite Database Management Blueprint for Flask Applications. 
 
 This package creates a management interface to view/modify sqlite databases in an existing Flask application from only a sqlite file. Somewhat similar to Flask-Admin except nothing is required other than a sqlite file.
