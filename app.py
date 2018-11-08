@@ -2,7 +2,7 @@
 # Author         : Haibo Zhu             
 # Email          : haibo.zhu@hotmail.com 
 # created        : 2018-11-05 16:54 
-# Last modified  : 2018-11-08 14:51
+# Last modified  : 2018-11-08 15:13
 # Filename       : app.py
 # Description    :                       
 #########################################
@@ -12,28 +12,20 @@ from flask_sqlalchemy import SQLAlchemy
 import random
 from db_init import db
 import os
-'''
-from flask_bootstrap import Bootstrap
-Bootstrap(app)
-sqliteAdminBP = sqliteAdminBlueprint(dbPath = dbPath)
-app.register_blueprint(sqliteAdminBP, url_prefix='/sqlite')
-app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
-'''
+
+
 class Example(db.Model):
     __tablename__='example'
 
     id = db.Column(db.Integer, primary_key=True)
-    str1 = db.Column(db.String(32))
-    str2 = db.Column(db.String(32))
-    str3 = db.Column(db.String(32))
+    column1 = db.Column(db.String(32))
+    column2 = db.Column(db.String(32))
+    column3 = db.Column(db.String(32))
 
-    def __init__(self, str1, str2, str3):
-      self.str1 = str1
-      self.str2 = str2
-      self.str3 = str3
-
-    def __repr__(self):
-      return "example id:{}, {} {} {}".format(self.id, self.str1, self.str2, self.str3)
+    def __init__(self, col1, col2, col3):
+      self.column1 = col1
+      self.column2 = col2
+      self.column3 = col3
 
     @staticmethod
     def generate(num):
@@ -41,7 +33,7 @@ class Example(db.Model):
         s1 = random.choice(['2016','2017','2018'])
         s2 = str(random.randint(1,12))
         s3 = str(random.randint(3000,5000))
-        e = Example(str1=s1, str2=s2, str3=s3)
+        e = Example(col1=s1, col2=s2, col3=s3)
         db.session.add(e)
         db.session.commit()
 
@@ -72,11 +64,12 @@ def setup_database(app):
     Example.generate(100)
 
 if __name__ == '__main__':
+
   app  = create_app()
+
   @app.route('/')
   def hello_world():
     return 'Hello flask_sqlite_web!'
-
 
   if not os.path.isfile(db_path):
     setup_database(app)
