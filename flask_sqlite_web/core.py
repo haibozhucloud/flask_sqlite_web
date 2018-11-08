@@ -2,7 +2,7 @@
 # Author         : Haibo Zhu             
 # Email          : haibo.zhu@hotmail.com 
 # created        : 2018-11-05 17:40 
-# Last modified  : 2018-11-08 12:28
+# Last modified  : 2018-11-08 14:51
 # Filename       : core.py
 # Description    :                       
 #########################################
@@ -61,19 +61,11 @@ def sqliteAdminBlueprint(
   @sqlite.route('/',methods=['GET', 'POST'])
   @decorator
   def index():
-    print("==>flask_sqlite_admin::index tables:{}".format(tables))
-    #db = sqlite3.connect(dbPath,timeout=1000)
-    #db.isolation_level=None
     sf = sqliteAdminFunctions(global_db,tables=tables,extraRules=extraRules)
 
     if request.method == 'POST':
       add_form = AddFieldForm()
       if add_form.validate_on_submit():
-        print("  ## Add column :")
-        print("  ##   table: {}".format(add_form.field_table.data))
-        print("  ##   name :{}".format(add_form.field_name.data))
-        print("  ##   type :{}".format(add_form.field_type.data))
-        print("  ##   default value :{}".format(add_form.field_default.data))
         sf.addCol(add_form.field_name.data,
             add_form.field_type.data,
             add_form.field_table.data)
@@ -83,7 +75,6 @@ def sqliteAdminBlueprint(
     if len(res) == 0:
       raise ValueError('No sqlite db and/or tables found at path = %s' % dbPath)
     else:
-      #print("  ##res:{}".format(pprint.pformat(res)))
       return render_template('flask_sqlite_admin/sqlite.html',res=res,title=title,h1=h1,baseLayout=baseLayout,bpName=bpName) 
 
 
@@ -91,18 +82,6 @@ def sqliteAdminBlueprint(
   @sqlite.route('/api',methods=['GET','POST','PUT','DELETE'])
   @decorator
   def api():
-    print("==>flask_sqlite_admin::api request.method:{}".format(request.method))
-    # create sqliteAdminFunctions object
-
-    '''
-      try:
-        pass
-        #db = sqlite3.connect(dbPath, timeout=1000)
-        #db.isolation_level=None
-        c = db.execute("select count(id) as c from example" )
-      except Exception as e:
-        print("  ##exception:{}".format(e))
-    '''
 
     sf = sqliteAdminFunctions(global_db,tables=tables,extraRules=extraRules)
 
@@ -112,11 +91,8 @@ def sqliteAdminBlueprint(
       try:
         res = sf.tableContents(request.args['table'],request.args['sort'],request.args['dir'],request.args['offset'])
       except Exception as e:
-        #db.close()
         return render_template('flask_sqlite_admin/sqlite_ajax.html',table=request.args['table'],error='{}'.format(e))
-      #print("  ## GET res:{}".format(pprint.pformat(res)))
       add_form = AddFieldForm()
-      print("  ##set add_form.table {}".format(request.args['table']))
       add_form.field_table.default = request.args['table']
       add_form.field_table.data = request.args['table']
       #db.close()
@@ -126,7 +102,6 @@ def sqliteAdminBlueprint(
     elif request.method == 'POST':
       try:
         request_data = request.get_json()
-        print("  ## got request:{}".format(request_data))
         if "command" in request_data:
 
           # delete column
@@ -143,7 +118,6 @@ def sqliteAdminBlueprint(
 
           #delete a row
           elif request_data['command'] == 'del_row':
-            print("  ## deleting a row:{}".format(request_data['id']))
             table = request_data['table']
             id    = request_data['id']
             sf.delRow(table, id)
@@ -152,11 +126,9 @@ def sqliteAdminBlueprint(
           elif request_data['command'] == 'save_detail':
             table = request_data['table']
             row = request_data['row']
-            print("  ## creating a row {} in {}".format(row, table))
             sf.addRow(table,row)
             res = {'status':1,'message':'<a href="" class="alert-link">Refresh Page</a>'}
       except Exception as e:
-        print("  ##error:{}".format(e))
         res = {'status':0,'error':'{}'.format(e)}
       return json.dumps(res)
 
@@ -165,7 +137,6 @@ def sqliteAdminBlueprint(
   @sqlite.route('/selected', methods=['POST'])
   @decorator
   def selected():
-    print("==>selected: {}".format(request.form.get('selected','null')))
 
     response = make_response()
     return response
