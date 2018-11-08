@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # flask-sqlite-admin
 SQLite Database Management Blueprint for Flask Applications. 
 
@@ -101,3 +102,7 @@ However, the following measures do apply:
 ### Future development
 * Variable rows per page drop down
 * Ability to create, edit, modify tables
+=======
+# flask_sqlite_web
+Manage sqlite database by web, including editing/removing/adding columns and rows on web. Works with python3, sqlite3, flask framework. Bases on the project of 'twaldear/flask-sqlite-admin' 
+>>>>>>> c87d9a9dfcb34ae940fec124a089f52b3d3da826
