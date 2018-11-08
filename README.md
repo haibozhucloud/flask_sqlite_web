@@ -14,7 +14,8 @@ This package creates a management interface to view/modify sqlite databases in a
 * Access http://\<your server net address\>:5000/sqlite
 
 ## Advanced
-This project was inspired and quickly created based on https://github.com/twaldear/flask-sqlite-admin
+This project was inspired and quickly created based on https://github.com/twaldear/flask-sqlite-admin.
+
 The new features are:
 * Can add a new column on web
 * Can delete a new column on web
