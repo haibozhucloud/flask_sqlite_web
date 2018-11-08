@@ -5,13 +5,13 @@ This package creates a management interface to view/modify sqlite databases in a
 
 ## Preparation
 ### Ubuntu16.04
-  *virtualenv venv3 --python=/usr/bin/python3
-  *source venv3/bin/activate
-  *pip3 install -r requirments.txt
+* virtualenv venv3 --python=/usr/bin/python3
+* source venv3/bin/activate
+* pip3 install -r requirments.txt
 
 ## Usage
-  *python app.py
-  *Access http://\<your server net address\>:5000/sqlite
+* python app.py
+* Access http://\<your server net address\>:5000/sqlite
 
 ## Advanced
 This project was inspired and quickly created based on https://github.com/twaldear/flask-sqlite-admin
