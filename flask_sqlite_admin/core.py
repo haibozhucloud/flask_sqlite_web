@@ -2,7 +2,7 @@
 # Author         : Haibo Zhu             
 # Email          : haibo.zhu@hotmail.com 
 # created        : 2018-11-05 17:40 
-# Last modified  : 2018-11-07 20:02
+# Last modified  : 2018-11-08 12:28
 # Filename       : core.py
 # Description    :                       
 #########################################
@@ -48,8 +48,8 @@ def sqliteAdminBlueprint(
    dbPath,
    bpName='sqliteAdmin',
    tables=[],
-   title='Test data',
-   h1='Test data',
+   title='标题',
+   h1='页标题',
    baseLayout='flask_sqlite_admin/sqlite_base.html',
    extraRules=[],
    decorator=defaultDecorator):
